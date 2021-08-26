@@ -1,8 +1,6 @@
-# /bin/python3
 """ script that sets up your web servers for the deployment of web_static """
 
 from fabric.api import env, run, put
-from fabric.context_managers import cd
 
 env.hosts = ['35.229.127.214', '3.89.225.59']
 
@@ -34,25 +32,23 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    """ abric script (based on the file 1-pack_web_static.py)
-    that distributes an archive to your web servers,
-    using the function do_deploy"""
+    """ script that sets up your web servers for the
+    deployment of web_static """
+    from fabric.context_managers import cd
 
     file_name = str(archive_path.replace('versions/', ''))
-    path1 = '/data/web_static/releases/web_static'
-    path2 = '/data/web_static/current'
-
     with cd("/tmp"):
         if put(archive_path, file_name).failed:
             return (False)
-        elif run('tar -xvf %s -C %s' %
-                 (file_name, '/data/web_static/releases/')).failed:
+        elif run('tar -xvf %s -C %s' % (file_name,
+                                        '/data/web_static/releases/')).failed:
             return (False)
         elif run('rm %s' % (file_name)).failed:
             return (False)
     with cd("/data/web_static"):
         if run('unlink current').failed:
             return (False)
-        elif run('ln -sf %s %s' % (path1, path2)).failed:
+        elif run("""ln -sf /data/web_static/releases/web_static
+        /data/web_static/current""").failed:
             return (False)
     return (True)
