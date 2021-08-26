@@ -9,9 +9,16 @@ if [ "" = "$PKG_OK" ]; then
 fi
 sudo mkdir -p /data/web_static/releases/test/ /data/web_static/shared/
 sudo touch /data/web_static/releases/test/index.html
-sudo chown -R ubuntu /data/web_static/releases/test/index.html
-echo "If you see this it's because you just succeeded <3" >> /data/web_static/releases/test/index.html
+sudo tee -a /data/web_static/releases/test/index.html > /dev/null << END
+<html >
+<head >
+</head >
+<body >
+Holberton School
+</body >
+</html >
+END
 sudo ln -sf /data/web_static/releases/test /data/web_static/current
 sudo chown -R ubuntu:ubuntu /data
 sudo sed -i '/$hostname;/ a \\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t\t}' /etc/nginx/sites-available/default
-sudo nginx -s reload
+sudo service nginx restart
