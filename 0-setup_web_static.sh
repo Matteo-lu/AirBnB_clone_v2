@@ -13,5 +13,5 @@ sudo chown -R ubuntu /data/web_static/releases/test/index.html
 echo "If you see this it's because you just succeeded <3" >> /data/web_static/releases/test/index.html
 sudo ln -sf /data/web_static/releases/test /data/web_static/current
 sudo chown -R ubuntu:ubuntu /data
-echo -e "server {\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t\t}\n}" > /etc/nginx/sites-enabled/default
+sudo sed -i '/$hostname;/ a \\n\tlocation /hbnb_static/ {\n\t\talias /data/web_static/current/;\n\t\t}' /etc/nginx/sites-available/default
 sudo nginx -s reload
