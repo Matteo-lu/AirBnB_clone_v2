@@ -14,7 +14,7 @@ def do_pack():
     now = datetime.now()
     dt_string = now.strftime("%Y%m%d%H%M%S")
     file_name = 'web_static_' + dt_string
-    source_dir = '/AirBnB_clone_v2/web_static'
+    source_dir = 'AirBnB_clone_v2/web_static'
 
     if not os.path.exists('versions'):
         local("mkdir -p versions")
