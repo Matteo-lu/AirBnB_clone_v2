@@ -46,7 +46,7 @@ def do_deploy(archive_path):
         elif run('rm %s' % (file_name)).failed:
             return (False)
     with cd("/data/web_static"):
-        if run('unlink current').failed:
+        if run('rm -rf current').failed:
             return (False)
         elif run("""ln -sf /data/web_static/releases/web_static
         /data/web_static/current""").failed:
