@@ -2,6 +2,7 @@
 """ script that sets up your web servers for the deployment of web_static """
 
 from fabric.api import env, run, put
+from fabric.context_managers import cd
 
 env.hosts = ['35.229.127.214', '3.89.225.59']
 
@@ -33,7 +34,9 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    from fabric.context_managers import cd
+    """ abric script (based on the file 1-pack_web_static.py)
+    that distributes an archive to your web servers,
+    using the function do_deploy"""
 
     file_name = str(archive_path.replace('versions/', ''))
     path1 = '/data/web_static/releases/web_static'
