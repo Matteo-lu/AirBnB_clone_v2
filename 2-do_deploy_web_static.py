@@ -33,6 +33,8 @@ def do_pack():
 
 
 def do_deploy(archive_path):
+    """ script that sets up your web servers for the
+    deployment of web_static """
     from fabric.context_managers import cd
 
     file_name = str(archive_path.replace('versions/', ''))
