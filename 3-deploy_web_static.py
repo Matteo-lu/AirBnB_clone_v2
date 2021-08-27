@@ -28,7 +28,7 @@ def do_pack():
     path_file = 'versions' + '/' + file_name + '.tgz'
 
     if os.path.exists(path_file):
-        return(path_file + '.tgz')
+        return(path_file)
     else:
         return(None)
 
