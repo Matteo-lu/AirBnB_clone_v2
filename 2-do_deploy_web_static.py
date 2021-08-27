@@ -1,9 +1,10 @@
-#!/usr/bin/python3
+# /bin/python3
 """ script that sets up your web servers for the deployment of web_static """
 
 from fabric.api import env, run, put
+from os.path import isfile
 
-env.hosts = ['35.229.127.214', '3.89.225.59']
+env.hosts = ['35.243.253.93', '3.81.226.200']
 
 
 def do_pack():
@@ -33,29 +34,37 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    """ script that sets up your web servers for the
-    deployment of web_static """
+    """distributes an archive to your web servers, using the function do_deploy
+
+    Args:
+        archive_path ([file]): file at the path
+
+    Returns:
+        [bool]: True or False
+    """
     from fabric.context_managers import cd
 
     file_name = str(archive_path.replace('versions/', ''))
     name = file_name.replace('.tgz', '')
-    path_deploy = "/data/web_static/releases/"
-    web_st = "/web_static/"
+    pt_deploy = "/data/web_static/releases/"
+    wb_st = "/web_static/"
 
     with cd("/tmp"):
+        if not isfile(archive_path):
+            return False
         if put(archive_path, file_name).failed:
             return (False)
-        elif run("mkdir -p path_deploy%s" % (name)).failed:
+        if run("mkdir -p %s%s" % (pt_deploy, name)).failed:
             return (False)
-        elif run('tar -xzf %s -C path_deploy%s' % (file_name, name)).failed:
+        if run('tar -xzf %s -C %s%s' % (file_name, pt_deploy, name)).failed:
             return (False)
-        elif run('mv path_deploy%sweb_st* path_deploy%s/' % (name, name)):
+        if run('mv %s%s%s* %s%s/' % (pt_deploy, name, wb_st, pt_deploy, name)):
             return(False)
-        elif run('rm -rf path_deploy%s/web_static' % (name)).failed:
+        if run('rm -rf %s%s/web_static' % (pt_deploy, name)).failed:
             return (False)
     with cd("/data/web_static"):
         if run('rm -rf current').failed:
             return (False)
-        elif run('ln -s path_deploy%s path_deploycurrent' % (name)).failed:
+        if run('ln -s %s%s %scurrent' % (pt_deploy, name, pt_deploy)).failed:
             return (False)
     return (True)
