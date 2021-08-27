@@ -49,9 +49,10 @@ def do_deploy(archive_path):
     pt_deploy = "/data/web_static/releases/"
     wb_st = "/web_static/"
 
-    with cd("/tmp"):
-        if not isfile(archive_path):
+    if not isfile(archive_path):
             return False
+
+    with cd("/tmp"):
         if put(archive_path, file_name).failed:
             return (False)
         if run("mkdir -p %s%s" % (pt_deploy, name)).failed:
