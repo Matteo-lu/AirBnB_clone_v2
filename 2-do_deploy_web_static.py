@@ -1,3 +1,4 @@
+# /bin/python3
 """ script that sets up your web servers for the deployment of web_static """
 
 from fabric.api import env, run, put
@@ -32,23 +33,24 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    """ script that sets up your web servers for the
-    deployment of web_static """
     from fabric.context_managers import cd
 
     file_name = str(archive_path.replace('versions/', ''))
+    name = file_name.replace('.tgz', '')
     with cd("/tmp"):
         if put(archive_path, file_name).failed:
             return (False)
-        elif run('tar -xvf %s -C %s' % (file_name,
-                                        '/data/web_static/releases/')).failed:
+        elif run("mkdir -p /data/web_static/releases/%s" % (name)).failed:
             return (False)
-        elif run('rm %s' % (file_name)).failed:
+        elif run('tar -xzf %s -C /data/web_static/releases/%s' % (file_name, name)).failed:
+            return (False)
+        elif run('mv /data/web_static/releases/%s/web_static/* /data/web_static/releases/%s/' % (name, name)):
+            return(False)
+        elif run('rm -rf /data/web_static/releases/%s/web_static' % (name)).failed:
             return (False)
     with cd("/data/web_static"):
         if run('rm -rf current').failed:
             return (False)
-        elif run("""ln -sf /data/web_static/releases/web_static
-        /data/web_static/current""").failed:
+        elif run('ln -s /data/web_static/releases/%s /data/web_static/current' % (name)).failed:
             return (False)
     return (True)
