@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """ script that sets up your web servers for the deployment of web_static """
 
 from fabric.api import env, run, put
