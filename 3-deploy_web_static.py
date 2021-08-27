@@ -28,7 +28,7 @@ def do_pack():
     path_file = 'versions' + '/' + file_name + '.tgz'
 
     if os.path.exists(path_file):
-        return(path_file)
+        return(path_file + '.tgz')
     else:
         return(None)
 
@@ -42,32 +42,22 @@ def do_deploy(archive_path):
     Returns:
         [bool]: True or False
     """
-    from fabric.context_managers import cd
+    if not isfile(archive_path):
+        return (False)
+    try:
+        with cd("/tmp"):
+            put(archive_path, file_name)
+            run("mkdir -p %s%s" % (pt_deploy, name))
+            run('tar -xzf %s -C %s%s' % (file_name, pt_deploy, name))
+            run('mv %s%s%s* %s%s/' % (pt_deploy, name, wb_st, pt_deploy, name))
+            run('rm -rf %s%s/web_static' % (pt_deploy, name))
+        with cd("/data/web_static"):
+            run('rm -rf current')
+            run('ln -s %s%s %scurrent' % (pt_deploy, name, pt_deploy))
+        return (True)
+    except:
+        return (False)
 
-    file_name = str(archive_path.replace('versions/', ''))
-    name = file_name.replace('.tgz', '')
-    pt_deploy = "/data/web_static/releases/"
-    wb_st = "/web_static/"
-
-    with cd("/tmp"):
-        if not isfile(archive_path):
-            return False
-        if put(archive_path, file_name).failed:
-            return (False)
-        if run("mkdir -p %s%s" % (pt_deploy, name)).failed:
-            return (False)
-        if run('tar -xzf %s -C %s%s' % (file_name, pt_deploy, name)).failed:
-            return (False)
-        if run('mv %s%s%s* %s%s/' % (pt_deploy, name, wb_st, pt_deploy, name)):
-            return(False)
-        if run('rm -rf %s%s/web_static' % (pt_deploy, name)).failed:
-            return (False)
-    with cd("/data/web_static"):
-        if run('rm -rf current').failed:
-            return (False)
-        if run('ln -s %s%s %scurrent' % (pt_deploy, name, pt_deploy)).failed:
-            return (False)
-    return (True)
 
 def deploy():
     """ script (based on the file 2-do_deploy_web_static.py)
